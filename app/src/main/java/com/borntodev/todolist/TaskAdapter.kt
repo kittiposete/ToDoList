@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.borntodev.todolist.TaskAdapter.ViewHolder
 
@@ -23,7 +24,7 @@ class TaskAdapter(data:ArrayList<TaskClass>, context: Context): RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        holder.dataBind(data!![position])
     }
 
     override fun getItemCount(): Int {
@@ -32,7 +33,8 @@ class TaskAdapter(data:ArrayList<TaskClass>, context: Context): RecyclerView.Ada
 
     class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         fun dataBind(data:TaskClass){
-
+            val tv_title_task_row:TextView = itemView.findViewById(R.id.tv_title_task_row)
+            tv_title_task_row.text = data.title
         }
     }
 }
