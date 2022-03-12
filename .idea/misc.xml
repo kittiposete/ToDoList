@@ -3,7 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/ProgramProject/Android/ToDoList/app/src/main/res/layout/activity_create_task.xml" value="0.144" />
+        <entry key="..\:/ProgramProject/Android/ToDoList/app/src/main/res/layout/activity_create_task.xml" value="0.2" />
         <entry key="..\:/ProgramProject/Android/ToDoList/app/src/main/res/layout/activity_main.xml" value="0.144" />
         <entry key="..\:/ProgramProject/Android/ToDoList/app/src/main/res/layout/task_row.xml" value="0.264" />
       </map>
@@ -18,7 +18,7 @@
   <component name="VisualizationToolProject">
     <option name="state">
       <ProjectState>
-        <option name="scale" value="0.144" />
+        <option name="scale" value="0.264" />
       </ProjectState>
     </option>
   </component>
