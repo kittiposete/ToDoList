@@ -33,14 +33,6 @@ class MainActivity : AppCompatActivity() {
         rv_main_main.layoutManager = layoutManager
     }
 
-    override fun onStart() {
-        super.onStart()
-
-
-
-        readDataFromDatabase()
-    }
-
     @SuppressLint("CommitPrefEdits")
     private fun saveDataToDatabase(arrayToSave:ArrayList<TaskClass>){
         val databaseEditor = sharedPreferences.edit()
