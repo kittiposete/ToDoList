@@ -2,8 +2,10 @@ package com.borntodev.todolist
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = this.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
         val rv_main_main:RecyclerView = findViewById(R.id.rv_main_main)
+        val btn_create_task_main:Button = findViewById(R.id.btn_create_task_main)
 
         val data = ArrayList<TaskClass>()
         data.add(TaskClass("title", "dd", false))
@@ -31,6 +34,11 @@ class MainActivity : AppCompatActivity() {
 
         rv_main_main.adapter = adapter
         rv_main_main.layoutManager = layoutManager
+
+        btn_create_task_main.setOnClickListener {
+            val intent = Intent(this, CreateTaskActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -49,20 +57,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun readDataFromDatabase(): ArrayList<TaskClass> {
         val arrayOfClass = ArrayList<TaskClass>()
-
         var count = 0
-        var chack:Any? = ""
-        while (chack != null){
+        var check:Any? = ""
+        while (check != null){
             val gson = Gson()
             val jsonData = sharedPreferences.getString(count.toString(), null)
             if (jsonData != null){
                 val dataObjectItem = gson.fromJson(jsonData, TaskClass::class.java)
                 arrayOfClass.add(dataObjectItem)
             }
-            chack = jsonData
+            check = jsonData
             count++
         }
-
         return arrayOfClass
     }
 }
