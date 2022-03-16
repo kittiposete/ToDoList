@@ -41,15 +41,13 @@ class TaskAdapter(data:ArrayList<TaskClass>, context: Context): RecyclerView.Ada
         return data!!.size
     }
 
-    class ViewHolder(itemView: View, private var sharedPreferences: SharedPreferences):RecyclerView.ViewHolder(itemView){
-
+    class ViewHolder(itemView: View, private var sharedPreferences: SharedPreferences):RecyclerView.ViewHolder(itemView) {
         fun dataBind(data:TaskClass, index:Int, context:Context){
             val tv_title_task_row:TextView = itemView.findViewById(R.id.tv_title_task_row)
             tv_title_task_row.text = data.title
 
             val iv_delete_task_row:ImageView = itemView.findViewById(R.id.iv_delete_task_row)
             iv_delete_task_row.setOnClickListener {
-                Toast.makeText(context, "delete", Toast.LENGTH_SHORT).show()
                 deleteItemInDatabase(index)
             }
         }
