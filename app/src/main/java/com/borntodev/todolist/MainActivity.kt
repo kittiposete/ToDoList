@@ -6,13 +6,16 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val databaseName = "task_list"
+    private val arrayListOfTaskItem = ArrayList<TaskClass>()
     lateinit var sharedPreferences:SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,25 +23,38 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         sharedPreferences = this.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
-        val rv_main_main:RecyclerView = findViewById(R.id.rv_main_main)
-        val btn_create_task_main:Button = findViewById(R.id.btn_create_task_main)
-
-        val data = ArrayList<TaskClass>()
-        data.add(TaskClass("title", "dd", false))
-        data.add(TaskClass("title2", "des", true))
-        data.add(TaskClass("title3", "aaaa", false))
-        saveDataToDatabase(data)
+        for (i in readDataFromDatabase()){
+            arrayListOfTaskItem.add(i)
+        }
 
         val layoutManager = LinearLayoutManager(this)
-        val adapter = TaskAdapter(readDataFromDatabase(), this)
-
+        val adapter = TaskAdapter(arrayListOfTaskItem, this)
         rv_main_main.adapter = adapter
         rv_main_main.layoutManager = layoutManager
-
-        btn_create_task_main.setOnClickListener {
-            val intent = Intent(this, CreateTaskActivity::class.java)
-            startActivity(intent)
+        
+        fab_new_task_main.setOnClickListener{
+            val taskTitle = edt_new_task_main.text.toString()
+            val taskItem = TaskClass(taskTitle, false)
+            newTask(taskItem)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        arrayListOfTaskItem.clear()
+        for (i in readDataFromDatabase()){
+            arrayListOfTaskItem.add(i)
+        }
+    }
+    
+    private fun newTask(item:TaskClass){
+        val arrayOfTaskClass = ArrayList<TaskClass>()
+        for (i in readDataFromDatabase()){
+            arrayOfTaskClass.add(i)
+        }
+        arrayOfTaskClass.add(item)
+        saveDataToDatabase(arrayOfTaskClass)
+        Toast.makeText(this, "new task", Toast.LENGTH_SHORT).show()
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -52,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             databaseEditor.putString(count.toString(), json)
             count ++
         }
-        databaseEditor.apply();
+        databaseEditor.apply()
     }
 
     private fun readDataFromDatabase(): ArrayList<TaskClass> {
