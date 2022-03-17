@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.borntodev.todolist.TaskAdapter.ViewHolder
 import com.google.gson.Gson
@@ -25,7 +23,8 @@ class TaskAdapter(data:ArrayList<TaskClass>, context: Context): RecyclerView.Ada
     init {
         this.data = data
         this.context = context
-        sharedPreferences = this.context!!.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
+//        sharedPreferences = this.context!!.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
+//        sharedPreferences = MainActivity().getContextOfApplication()!!.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -54,24 +53,24 @@ class TaskAdapter(data:ArrayList<TaskClass>, context: Context): RecyclerView.Ada
 
         private fun deleteItemInDatabase(index:Int){
             val data = readDataFromDatabase()
-            Log.d("myDebug", data.size.toString())
-            Log.d("myDebug", index.toString())
             data.removeAt(index)
-            Log.d("myDebug", data.toString())
             saveDataToDatabase(data)
         }
 
         private fun saveDataToDatabase(arrayToSave:ArrayList<TaskClass>){
             val databaseEditor = sharedPreferences.edit()
-
+            databaseEditor.clear()
             var count = 0
             for (i in arrayToSave){
                 val gson = Gson()
                 val json = gson.toJson(i)
                 databaseEditor.putString(count.toString(), json)
+                databaseEditor.apply()
+                Log.d("myDebug json", json)
+                Log.d("myDebug count", count.toString())
                 count ++
             }
-            databaseEditor.apply()
+            MainActivity().refreshRecycleView(arrayToSave)
         }
 
         private fun readDataFromDatabase(): ArrayList<TaskClass> {
