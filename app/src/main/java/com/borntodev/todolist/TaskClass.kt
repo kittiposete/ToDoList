@@ -1,6 +1,6 @@
 package com.borntodev.todolist
 
-class TaskClass() {
+open class TaskClass() {
     var title:String ?= null
     var important:Boolean ?= null
 
