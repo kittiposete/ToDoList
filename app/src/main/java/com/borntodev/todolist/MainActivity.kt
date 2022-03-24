@@ -2,10 +2,11 @@ package com.borntodev.todolist
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,54 +14,63 @@ import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    private var arrayListOfTaskItem = ArrayList<TaskClass>()
     private val databaseName = "task_list"
-    private val arrayListOfTaskItem = ArrayList<TaskClass>()
-    private var sharedPreferences: SharedPreferences? = null
     lateinit var recyclerView: RecyclerView
+    private var adapter:TaskAdapter ?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sharedPreferences = this.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
         recyclerView = findViewById(R.id.rv_main_main)
 
-        refreshRecycleView(readDataFromDatabase())
         rv_main_main.layoutManager = LinearLayoutManager(this)
-        
+        adapter = TaskAdapter(arrayListOfTaskItem, this)
+        adapter!!.CurrencySelectorAdapter(this)
+        rv_main_main.adapter = adapter
+
         fab_new_task_main.setOnClickListener{
-            val taskTitle = edt_new_task_main.text.toString()
+            val taskTitle = edt_new_task_main.text.toString().trim()
             val taskItem = TaskClass(taskTitle, false)
-            createTask(taskItem)
+            addItemInArrayListOfTaskItem(taskItem)
+            edt_new_task_main.setText("")
+            updateRecycleView()
         }
     }
 
-    fun refreshRecycleView(data: ArrayList<TaskClass>){
-        Log.d("myDebug", "refreshRecycleView")
-        for (i in data){
+    fun flipImportantItemInArrayOfListItem(index:Int){
+        val newArrayListOfTaskItem = ArrayList<TaskClass>()
+        var count = 0
+        for (i in arrayListOfTaskItem){
+            if (count == index){
+                val newItem = TaskClass(i.title.toString(), !i.important!!)
+                newArrayListOfTaskItem.add(newItem)
+            }else{
+                newArrayListOfTaskItem.add(i)
+            }
+            count++
+        }
+        arrayListOfTaskItem.clear()
+        for (i in newArrayListOfTaskItem){
             arrayListOfTaskItem.add(i)
         }
-        val adapter = TaskAdapter(arrayListOfTaskItem, this)
-        recyclerView = MainActivity().findViewById(R.id.rv_main_main)
-        if(recyclerView != null){
-            recyclerView?.adapter = adapter
-        }else{
-            Log.d("myDeubg", "null")
-        }
     }
 
-    private fun createTask(item:TaskClass){
-        val arrayOfTaskClass = ArrayList<TaskClass>()
-        for (i in readDataFromDatabase()){
-            arrayOfTaskClass.add(i)
-        }
-        arrayOfTaskClass.add(item)
-        saveDataToDatabase(arrayOfTaskClass)
-        Toast.makeText(this, "new task", Toast.LENGTH_SHORT).show()
+    fun deleteItemFromArrayOfListItem(index:Int){
+        arrayListOfTaskItem.removeAt(index)
     }
 
-    private fun readDataFromDatabase(): ArrayList<TaskClass> {
-        val arrayOfClass = ArrayList<TaskClass>()
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateRecycleView(){
+        adapter!!.notifyDataSetChanged()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // read data from database
+        val sharedPreferences = this.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
+
         var count = 0
         var check:Any? = ""
         while (check != null){
@@ -68,21 +78,23 @@ class MainActivity : AppCompatActivity() {
             val jsonData = sharedPreferences!!.getString(count.toString(), null)
             if (jsonData != null){
                 val dataObjectItem = gson.fromJson(jsonData, TaskClass::class.java)
-                arrayOfClass.add(dataObjectItem)
+                addItemInArrayListOfTaskItem(dataObjectItem)
             }
             check = jsonData
             count++
         }
-        return arrayOfClass
     }
 
-    @SuppressLint("CommitPrefEdits")
-    private fun saveDataToDatabase(arrayToSave:ArrayList<TaskClass>){
-        Log.d("myDebug", "saveDataToDatabase")
+    override fun onStop() {
+        // save data to database
+        super.onStop()
 
+        val sharedPreferences = this.getSharedPreferences(databaseName, Context.MODE_PRIVATE)
         val databaseEditor = sharedPreferences!!.edit()
+        databaseEditor.clear()
+        databaseEditor.apply()
         var count = 0
-        for (i in arrayToSave){
+        for (i in arrayListOfTaskItem){
             val gson = Gson()
             val json = gson.toJson(i)
             databaseEditor.putString(count.toString(), json)
@@ -91,5 +103,7 @@ class MainActivity : AppCompatActivity() {
         databaseEditor.apply()
     }
 
-
+    fun addItemInArrayListOfTaskItem(item:TaskClass){
+        arrayListOfTaskItem.add(item)
+    }
 }
