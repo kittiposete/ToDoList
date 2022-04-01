@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,10 +33,14 @@ class MainActivity : AppCompatActivity() {
 
         fab_new_task_main.setOnClickListener{
             val taskTitle = edt_new_task_main.text.toString().trim()
-            val taskItem = TaskClass(taskTitle, false)
-            addItemInArrayListOfTaskItem(taskItem)
-            edt_new_task_main.setText("")
-            updateRecycleView()
+            if (!TextUtils.isEmpty(taskTitle)){
+                val taskItem = TaskClass(taskTitle, false)
+                addItemInArrayListOfTaskItem(taskItem)
+                edt_new_task_main.setText("")
+                updateRecycleView()
+            }else{
+                Toast.makeText(this, "please enter task name", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

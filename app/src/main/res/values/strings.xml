@@ -4,4 +4,5 @@
     <string name="title">title</string>
     <string name="description">description</string>
     <string name="add">add</string>
+    <string name="dont_have_task">don\'t have task</string>
 </resources>
