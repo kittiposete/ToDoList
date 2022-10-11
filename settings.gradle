@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ToDoList"
 include ':app'
-include ':kotlinmultiplatformsharedmodule'
